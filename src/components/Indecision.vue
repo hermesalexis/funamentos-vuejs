@@ -9,7 +9,7 @@
       v-model="question">
     <p>Recuerda terminar con un signo de interrogación (?)</p>
 
-    <div>
+    <div v-if="isValidQuestion">
       <h2>{{ question }}</h2>
       <h1>{{ answer }}</h1>
     </div>
@@ -22,23 +22,29 @@ export default {
     return {
       question: null,
       answer: null,
-      img: null
+      img: null,
+      isValidQuestion: false
     }
   },
   methods: {
     async getAnswer() {
       this.answer = 'pensando...'
+       const mapper = {
+        "yes": "Si!",
+        "no": "No!"
+      }
+      const { answer, image } =  await fetch('https://yesno.wtf/api').then( r => r.json() )
 
-     const { answer, image } =  await fetch('https://yesno.wtf/api').then( r => r.json() )
-     this.answer = answer
-     this.img = image
+      this.answer = mapper[answer]
+      this.img = image
     }
   },
   watch: {
     question( value, oldValue ) {
+      this.isValidQuestion = false
       if( !value.includes('?') ) return
 
-      // TODO Realizar petición http
+      this.isValidQuestion = true
       this.getAnswer()
     }
   }
