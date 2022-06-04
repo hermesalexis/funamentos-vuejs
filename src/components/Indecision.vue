@@ -28,22 +28,30 @@ export default {
   },
   methods: {
     async getAnswer() {
-      this.answer = 'pensando...'
-       const mapper = {
-        "yes": "Si!",
-        "no": "No!"
-      }
-      const { answer, image } =  await fetch('https://yesno.wtf/api').then( r => r.json() )
+      try {
+        this.answer = 'pensando...'
+        const mapper = {
+            "yes": "Si!",
+            "no": "No!"
+        }
+        const { answer, image } =  await fetch('https://yesno.wtf/api').then( r => r.json() )
 
-      this.answer = mapper[answer]
-      this.img = image
+        this.answer = mapper[answer]
+        this.img = image
+      } catch (error) {
+        console.log("IndesicionComponent: ", error)
+        this.answer = "No se pudo cargar del API"
+        this.img    = null
+      }
     }
   },
   watch: {
     question( value, oldValue ) {
       this.isValidQuestion = false
-      if( !value.includes('?') ) return
+      console.log({ value })
 
+      if( !value.includes('?') ) return
+       console.log({ value })
       this.isValidQuestion = true
       this.getAnswer()
     }
